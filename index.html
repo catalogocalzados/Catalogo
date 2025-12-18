@@ -4,340 +4,716 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Catálogo semanal – Pedidos hasta el jueves</title>
+  <meta name="description" content="Catálogo semanal para pedidos por WhatsApp. Pedidos hasta el jueves." />
+
   <style>
     :root{
-      --bg:#0b0f14; --muted:#a6b0c3; --text:#e8eefc; --border:rgba(255,255,255,.08);
+      --bg:#0b0f14;
+      --panel:#0f1620;
+      --panel2:#0c121a;
+      --text:#e9eef6;
+      --muted:#a7b4c7;
+      --border:rgba(255,255,255,.10);
+      --btn:#153a2c;
+      --btn2:#1b4a36;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
     }
+
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(59,130,246,.25), transparent 60%),
-                  radial-gradient(900px 500px at 100% 0%, rgba(37,211,102,.15), transparent 60%),
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 600px at 50% -80px, rgba(40,80,120,.30), transparent 60%),
+                  radial-gradient(900px 500px at 20% 0, rgba(40,120,80,.18), transparent 60%),
                   var(--bg);
       color:var(--text);
     }
+    a{color:inherit}
+
+    /* ✅ HEADER: sticky SOLO título + subtítulo (bien finito) */
     header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(12px);
-      background: rgba(11,15,20,.72);
-      border-bottom:1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: rgba(11,15,20,.85);
+      border-bottom: 1px solid var(--border);
     }
-    .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    .title{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-    h1{font-size:20px;margin:0;letter-spacing:.2px}
-    .subtitle{color:var(--muted);font-size:13px;margin-top:6px}
-    .pillrow{display:flex;gap:8px;flex-wrap:wrap}
-    .pill{
-      font-size:12px; padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border); color:var(--muted); background: rgba(255,255,255,.03);
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 14px;
+    }
+    .title{
+      font-size: clamp(20px, 4.3vw, 34px);
+      line-height: 1.15;
+      margin: 2px 0 8px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: 13.5px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .subtitle span{
+      opacity:.95;
+      white-space: nowrap;
     }
 
+    main{padding: 10px 14px 24px}
+    .container{
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    /* ✅ CONTROLES: YA NO SON sticky, scrollean con la página */
     .controls{
-      display:grid; grid-template-columns:1fr; gap:10px; margin-top:12px;
+      margin-top: 12px;
+      display:grid;
+      gap: 10px;
     }
-    @media(min-width:720px){ .controls{grid-template-columns: 1.2fr .5fr .5fr .5fr;} }
-    input,select{
-      width:100%; padding:12px;
-      border-radius:12px; border:1px solid var(--border);
-      background: rgba(18,24,38,.9); color:var(--text); outline:none;
+    .row3{
+      display:grid;
+      gap:10px;
+      grid-template-columns: 1fr;
     }
-    input::placeholder{color:rgba(166,176,195,.7)}
+    @media (min-width: 700px){
+      .row3{grid-template-columns: 1fr 1fr 1fr;}
+    }
+
+    .input, select{
+      width:100%;
+      border:1px solid var(--border);
+      background: rgba(15,22,32,.65);
+      color: var(--text);
+      padding: 13px 14px;
+      border-radius: 14px;
+      outline:none;
+      box-shadow: 0 1px 0 rgba(255,255,255,.03) inset;
+    }
+    .input::placeholder{color:rgba(167,180,199,.75)}
+    select{appearance:none}
 
     .grid{
-      display:grid; grid-template-columns:1fr; gap:14px;
-      padding:18px 16px 30px; max-width:1100px; margin:0 auto;
+      margin-top: 14px;
+      display:grid;
+      gap: 14px;
+      grid-template-columns: 1fr;
     }
-    @media(min-width:560px){ .grid{grid-template-columns:1fr 1fr} }
-    @media(min-width:920px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+    @media (min-width: 700px){
+      .grid{grid-template-columns: 1fr 1fr;}
+    }
 
     .card{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(18,24,38,.92), rgba(18,24,38,.75));
-      border-radius:18px; overflow:hidden;
-      box-shadow:0 10px 28px rgba(0,0,0,.35);
-      display:flex; flex-direction:column;
-    }
-    .img{
-      width:100%;
-      aspect-ratio: 1 / 1;
-      background:#0f1624;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(15,22,32,.62), rgba(12,18,26,.62));
+      box-shadow: var(--shadow);
       overflow:hidden;
+    }
+
+    .hero{
+      position: relative;
+      background: #05080d;
+      aspect-ratio: 4 / 3;
+      overflow:hidden;
+    }
+    .hero img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transform: scale(1.01);
+    }
+
+    .thumbs{
+      display:flex;
+      gap:10px;
+      padding: 10px 12px 0;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .thumbs::-webkit-scrollbar{height:8px}
+    .thumbs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12); border-radius:999px}
+    .thumb{
+      flex: 0 0 auto;
+      width: 58px;
+      height: 44px;
+      border-radius: 12px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      opacity: .82;
+      cursor:pointer;
+    }
+    .thumb.active{
+      opacity: 1;
+      border-color: rgba(120,220,160,.65);
+      box-shadow: 0 0 0 2px rgba(120,220,160,.18);
+    }
+    .thumb img{width:100%; height:100%; object-fit: cover; display:block}
+
+    .content{
+      padding: 10px 14px 14px;
+    }
+
+    .tagrow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin: 8px 0 10px;
+    }
+    .tag{
+      font-size: 12.5px;
+      color: rgba(233,238,246,.92);
+      border: 1px solid rgba(255,255,255,.11);
+      background: rgba(10,14,20,.35);
+      padding: 7px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .name{
+      margin: 6px 0 6px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+    .note{
+      margin:0 0 12px;
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+
+    .priceRow{
+      display:flex;
+      justify-content:space-between;
+      gap: 14px;
+      align-items:flex-end;
+      padding: 10px 0 12px;
+      border-top: 1px dashed rgba(255,255,255,.12);
+      margin-top: 10px;
+    }
+    .priceLabel{
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .price{
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing:.3px;
+    }
+    .rightHint{
+      text-align:right;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.25;
+    }
+
+    .btn{
+      width:100%;
+      border: 1px solid rgba(120,220,160,.22);
+      background: linear-gradient(180deg, var(--btn2), var(--btn));
+      color: #eafff2;
+      font-weight: 850;
+      font-size: 16.5px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      cursor:pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    }
+    .btn:active{transform: translateY(1px)}
+
+    footer{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 14px 30px;
+      color: rgba(167,180,199,.75);
+      font-size: 12.5px;
+      text-align:center;
+    }
+
+    /* Modal (galería grande) */
+    .modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 50;
+      padding: 16px;
+    }
+    .modal.open{display:flex}
+    .modalBox{
+      width:min(980px, 100%);
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,14,20,.92);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    }
+    .modalTop{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      color: rgba(233,238,246,.92);
+      font-size: 13px;
+    }
+    .xbtn{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(233,238,246,.9);
+      border-radius: 12px;
+      padding: 7px 10px;
+      cursor:pointer;
+    }
+    .modalImg{
+      width:100%;
+      height: min(72vh, 620px);
+      background:#05080d;
       display:flex;
       align-items:center;
       justify-content:center;
     }
-    .img img{width:100%;height:100%;object-fit:cover;transform:scale(1.02)}
-
-    .thumbs{
-      display:flex; gap:8px; padding:10px 12px 0;
+    .modalImg img{
+      max-width:100%;
+      max-height:100%;
+      object-fit:contain;
+      display:block;
+    }
+    .modalThumbs{
+      display:flex;
+      gap:10px;
+      padding: 12px;
       overflow:auto;
+      border-top: 1px solid rgba(255,255,255,.10);
     }
-    .thumb{
-      width:54px; height:54px; flex:0 0 auto;
-      border-radius:12px; overflow:hidden;
-      border:1px solid var(--border);
-      background:#0f1624;
-      cursor:pointer;
-      opacity:.78;
-    }
-    .thumb.active{opacity:1; outline:2px solid rgba(255,255,255,.18)}
-    .thumb img{width:100%;height:100%;object-fit:cover}
-
-    .content{padding:14px 14px 16px;display:grid;gap:10px}
-    .name{font-size:16px;font-weight:800;margin:0}
-    .muted{color:var(--muted);font-size:12px}
-    .price{
-      display:flex; align-items:baseline; justify-content:space-between; gap:10px;
-      border-top:1px dashed rgba(255,255,255,.12);
-      padding-top:10px;
-    }
-    .price strong{font-size:18px}
-    .actions{display:grid; gap:10px; margin-top:6px}
-    .btn{
-      text-decoration:none;
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:12px; border-radius:14px;
-      border:1px solid rgba(37,211,102,.35);
-      background: rgba(37,211,102,.16);
-      color:#eafff2;
-      font-weight:800;
-    }
-    .count{color:#cfe3ff;font-weight:650}
   </style>
 </head>
 
 <body>
-<header>
-  <div class="wrap">
-    <div class="title">
-      <div>
-        <h1 id="pageTitle">Catálogo semanal – Pedidos hasta el jueves</h1>
-        <div class="subtitle">
-          Ingresos de la semana • Stock limitado • Solo por encargo • <span class="count" id="count"></span>
-        </div>
-      </div>
-      <div class="pillrow">
-        <span class="pill">✅ Premium</span>
-        <span class="pill">✅ Súper Luxo</span>
-        <span class="pill">📦 Stock limitado</span>
-      </div>
+  <header>
+    <div class="wrap">
+      <h1 class="title">Catálogo semanal – Pedidos hasta el jueves</h1>
+      <p class="subtitle">
+        <span>Ingresos de la semana</span>
+        <span>·</span>
+        <span>Stock limitado</span>
+        <span>·</span>
+        <span>Solo por encargo</span>
+      </p>
     </div>
+  </header>
 
-    <div class="controls">
-      <input id="q" placeholder="Buscar (ej: ojotas, mujer, infantil, botines...)" />
-      <select id="category">
-        <option value="">Todas las categorías</option>
-      </select>
-      <select id="type">
-        <option value="">Todos los tipos</option>
-      </select>
-      <select id="brand">
-        <option value="">Todas las marcas</option>
-      </select>
+  <main>
+    <div class="container">
+      <!-- ✅ filtros scrollean (NO sticky) -->
+      <section class="controls">
+        <input id="q" class="input" placeholder="Buscar (ej: ojotas, mujer, infantil, botines...)" />
+
+        <div class="row3">
+          <select id="cat">
+            <option value="">Todas las categorías</option>
+          </select>
+
+          <select id="type">
+            <option value="">Todos los tipos</option>
+          </select>
+
+          <select id="brand">
+            <option value="">Todas las marcas</option>
+          </select>
+        </div>
+      </section>
+
+      <section id="grid" class="grid"></section>
+    </div>
+  </main>
+
+  <footer>
+    Pedidos por WhatsApp: <strong>11 6724-8975</strong>
+  </footer>
+
+  <!-- Modal galería -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modalBox">
+      <div class="modalTop">
+        <div id="modalTitle">Galería</div>
+        <button class="xbtn" id="closeModal">Cerrar ✕</button>
+      </div>
+      <div class="modalImg">
+        <img id="modalImg" src="" alt="Imagen del producto" />
+      </div>
+      <div id="modalThumbs" class="modalThumbs"></div>
     </div>
   </div>
-</header>
 
-<main class="grid" id="grid"></main>
+  <script>
+    // ✅ Tu WhatsApp (con prefijo país Argentina 54)
+    const WHATSAPP_NUMBER = "5491167248975";
 
-<script>
-  // ==========================
-  // ✅ PLANTILLA (EDITÁS ACÁ)
-  // ==========================
+    // =============================
+    // DATA: productos
+    // - "images": podés cargar varias fotos del MISMO modelo (distintos colores)
+    // - NO usamos "REF"
+    // - "note": aclaración tipo "Talles en cada foto"
+    // =============================
+    const PRODUCTS = [
+      {
+        id: "1",
+        name: "Botines Infantil Campo",
+        category: "Infantil",
+        type: "Botines",
+        brand: "Nike", // ✅ corregido (antes decía Adidas)
+        price: 29000,
+        quality: ["Premium", "Súper Luxo"], // ✅ ambos
+        note: "Talles en cada foto 😉👇 (elegí la foto/opción)",
+        numbersHint: "ver en cada foto",
+        images: [
+          // ✅ fotos que ya subiste al repo (mismo modelo con colores/fotos)
+          "IMG-20251217-WA0129.jpg",
+          "IMG-20251217-WA0130.jpg",
+          "IMG-20251217-WA0131.jpg",
+          "IMG-20251217-WA0132.jpg",
+          "IMG-20251217-WA0133.jpg",
+          "IMG-20251217-WA0134.jpg",
+          "IMG-20251217-WA0135.jpg",
+        ]
+      },
 
-  // WhatsApp (Argentina): 54 + 9 + área + número
-  const WHATSAPP = "5491167248975";
+      // 👇 Este es un ejemplo de otro producto (ojotas mujer)
+      // Reemplazá las imágenes por los nombres reales que subas al repo.
+      {
+        id: "2",
+        name: "Ojotas tipo slide",
+        category: "Mujer/Hombre",
+        type: "Ojotas",
+        brand:  "Adidas/Nike",
+        price: 19000,
+        quality: ["Premium", "Súper Luxo"],
+        note: " Suela MICRO EXPANDIDO PURO. Forrado y costurada. Super confortable. Óptima terminaciónes. FOTO REAL. TALLES: 38/38 al 42/43",
+    //  numbersHint: "ver en cada foto",
+        images: [
+          "IMG-20251216-WA0022.jpg",
+          "IMG-20251216-WA0023.jpg",
+          "IMG-20251216-WA0026.jpg",
+          "IMG-20251216-WA0027.jpg",
+          "IMG-20251216-WA0028.jpg",
+          "IMG-20251216-WA0029.jpg",
+          "IMG-20251216-WA0030.jpg",
+          "IMG-20251216-WA0031.jpg",
+          "IMG-20251216-WA0032.jpg",
+          "IMG-20251216-WA0033.jpg",
+          "IMG-20251216-WA0034.jpg",
+          "IMG-20251216-WA0035.jpg",
+          "IMG-20251216-WA0036.jpg",
+          "IMG-20251216-WA0037.jpg",
+          "IMG-20251216-WA0038.jpg"
+        ]
+      }
+    ];
 
-  const PAGE_TITLE = "Catálogo semanal – Pedidos hasta el jueves";
+    // ================
+    // helpers
+    // ================
+    const $ = (s) => document.querySelector(s);
+    const fmtARS = (n) => {
+      try {
+        return new Intl.NumberFormat("es-AR", { style:"currency", currency:"ARS", maximumFractionDigits:0 }).format(n);
+      } catch {
+        return "$" + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+    };
 
-  // Cada producto = 1 modelo. photos = fotos/colores/variantes (sin nombres)
-  const products = [
-    // EJEMPLO OJOTAS (mismo modelo, varios colores)
-    {
-      name: "Ojotas Mujer",
-      category: "Mujer",
-      type: "Ojotas",
-      brand: "Vizzano",
-      price: 14200,
-      sizeInfo: "Números disponibles: ver en cada foto",
-      quality: ["Premium", "Súper Luxo"],
-      photos: [
-        "ojota-1.jpg",
-        "ojota-2.jpg",
-        "ojota-3.jpg",
-        "ojota-4.jpg"
-      ]
-    },
+    function uniqSorted(arr){
+      return [...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+    }
 
-    // EJEMPLO BOTINES (si es 1 foto sola, también funciona)
-    {
-      name: "Botines Infantil Campo",
-      category: "Infantil",
-      type: "Botines",
-      brand: "NIKE/ADIDAS",
-      price: 29000,
-      sizeInfo: "Talles en cada foto 😉👆",
-      quality: ["Premium", "Súper Luxo"],
-      photos: [
-        "IMG-20251217-WA0129.jpg",
-        "IMG-20251217-WA0130.jpg",
-        "IMG-20251217-WA0131.jpg",
-        "IMG-20251217-WA0132.jpg",
-        "IMG-20251217-WA0133.jpg",
-        "IMG-20251217-WA0134.jpg",
-        "IMG-20251217-WA0135.jpg"
-      ]
-    },
-  ];
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
 
-  // ==========================
-  // 🔧 LÓGICA (NO TOCAR)
-  // ==========================
+    function buildWhatsAppLink(p, selectedIndex){
+      // ✅ Mensaje pensado para que el cliente elija "foto/opción" sin escribir colores
+      const opt = (typeof selectedIndex === "number") ? (selectedIndex + 1) : 1;
 
-  document.title = PAGE_TITLE;
-  document.getElementById("pageTitle").textContent = PAGE_TITLE;
+      const qualities = (p.quality && p.quality.length)
+        ? `Calidad: ${p.quality.join(" / ")}`
+        : "";
 
-  const $grid = document.getElementById("grid");
-  const $q = document.getElementById("q");
-  const $count = document.getElementById("count");
+      const msg = [
+        "Hola! Quiero reservar:",
+        `• Modelo: ${p.name}`,
+        `• Marca: ${p.brand}`,
+        `• Precio: ${fmtARS(p.price)}`,
+        qualities ? `• ${qualities}` : "",
+        `• Opción (foto): #${opt}`,
+        "",
+        "Te mando captura del color/opción que quiero."
+      ].filter(Boolean).join("\n");
 
-  const $cat = document.getElementById("category");
-  const $type = document.getElementById("type");
-  const $brand = document.getElementById("brand");
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    }
 
-  function moneyARS(n){ return "$" + Number(n).toLocaleString("es-AR"); }
-  function normalize(s){
-    return (s||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-  }
+    // ================
+    // UI render
+    // ================
+    const state = {
+      q: "",
+      cat: "",
+      type: "",
+      brand: "",
+      selectedImage: {} // productId -> index
+    };
 
-  function buildWA(p, selectedIndex){
-    const photoName = p.photos?.[selectedIndex] || "";
-    const option = Number.isFinite(selectedIndex) ? (selectedIndex + 1) : "";
-    const text =
-`Hola! Quiero reservar del catálogo semanal:
+    function fillSelects(){
+      const cats = uniqSorted(PRODUCTS.map(p=>p.category));
+      const types = uniqSorted(PRODUCTS.map(p=>p.type));
+      const brands = uniqSorted(PRODUCTS.map(p=>p.brand));
 
-• Producto: ${p.name}
-• Categoría: ${p.category}
-• Tipo: ${p.type}
-• Marca: ${p.brand}
-• Calidad: ${(p.quality||[]).join(" / ")}
+      const $cat = $("#cat");
+      const $type = $("#type");
+      const $brand = $("#brand");
 
-• Opción elegida: ${option}
-• Foto: ${photoName}
-
-${p.sizeInfo ? ("• " + p.sizeInfo) : ""}
-
-• Precio: ${moneyARS(p.price)}
-
-¿Hay stock?`;
-    return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
-  }
-
-  function uniqueValues(key){
-    return Array.from(new Set(products.map(p => p[key]).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
-  }
-
-  function fillSelect(selectEl, values){
-    values.forEach(v=>{
-      const opt=document.createElement("option");
-      opt.value=v; opt.textContent=v;
-      selectEl.appendChild(opt);
-    });
-  }
-
-  fillSelect($cat, uniqueValues("category"));
-  fillSelect($type, uniqueValues("type"));
-  fillSelect($brand, uniqueValues("brand"));
-
-  function card(p){
-    const el = document.createElement("article");
-    el.className = "card";
-
-    const defaultIndex = 0;
-
-    el.innerHTML = `
-      <div class="img"><img src="${p.photos[defaultIndex]}" alt="${p.name}"></div>
-
-      <div class="thumbs">
-        ${p.photos.map((src, i)=>`
-          <div class="thumb ${i===0?'active':''}" data-i="${i}">
-            <img src="${src}" alt="Opción ${i+1}">
-          </div>
-        `).join("")}
-      </div>
-
-      <div class="content">
-        <div class="pillrow">
-          <span class="pill">${p.category}</span>
-          <span class="pill">${p.type}</span>
-          <span class="pill">${p.brand}</span>
-          ${(p.quality||[]).map(q=>`<span class="pill">${q}</span>`).join("")}
-        </div>
-
-        <p class="name">${p.name}</p>
-        ${p.sizeInfo ? `<div class="muted">${p.sizeInfo}</div>` : ""}
-
-        <div class="price">
-          <div>
-            <div class="muted">Precio</div>
-            <strong>${moneyARS(p.price)}</strong>
-          </div>
-          <div class="muted">Elegí la foto/ opción</div>
-        </div>
-
-        <div class="actions">
-          <a class="btn" href="${buildWA(p, 0)}" target="_blank" rel="noopener">Reservar por WhatsApp</a>
-        </div>
-      </div>
-    `;
-
-    // lógica de cambiar la foto principal + actualizar el link WA con la opción elegida
-    const mainImg = el.querySelector(".img img");
-    const thumbs = el.querySelectorAll(".thumb");
-    const waBtn = el.querySelector(".btn");
-
-    thumbs.forEach(t=>{
-      t.addEventListener("click", ()=>{
-        thumbs.forEach(x=>x.classList.remove("active"));
-        t.classList.add("active");
-        const i = Number(t.dataset.i);
-        mainImg.src = p.photos[i];
-        waBtn.href = buildWA(p, i);
+      cats.forEach(v=>{
+        const o = document.createElement("option");
+        o.value = v; o.textContent = v;
+        $cat.appendChild(o);
       });
-    });
+      types.forEach(v=>{
+        const o = document.createElement("option");
+        o.value = v; o.textContent = v;
+        $type.appendChild(o);
+      });
+      brands.forEach(v=>{
+        const o = document.createElement("option");
+        o.value = v; o.textContent = v;
+        $brand.appendChild(o);
+      });
+    }
 
-    return el;
+    function matches(p){
+      const q = state.q.trim().toLowerCase();
+      if(q){
+        const hay = [
+          p.name, p.category, p.type, p.brand,
+          ...(p.quality || [])
+        ].join(" ").toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      if(state.cat && p.category !== state.cat) return false;
+      if(state.type && p.type !== state.type) return false;
+      if(state.brand && p.brand !== state.brand) return false;
+      return true;
+    }
+
+    function render(){
+      const list = PRODUCTS.filter(matches);
+      const grid = $("#grid");
+      grid.innerHTML = "";
+
+      list.forEach(p=>{
+        if(state.selectedImage[p.id] == null) state.selectedImage[p.id] = 0;
+
+        const active = Math.max(0, Math.min(state.selectedImage[p.id], (p.images?.length||1)-1));
+        state.selectedImage[p.id] = active;
+
+        const heroSrc = (p.images && p.images.length) ? p.images[active] : "";
+
+        const qualities = (p.quality && p.quality.length) ? p.quality : [];
+        const tagHTML = [
+          p.category ? `<span class="tag">${escapeHtml(p.category)}</span>` : "",
+          p.type ? `<span class="tag">${escapeHtml(p.type)}</span>` : "",
+          p.brand ? `<span class="tag">${escapeHtml(p.brand)}</span>` : "",
+          ...qualities.map(q => `<span class="tag">${escapeHtml(q)}</span>`)
+        ].filter(Boolean).join("");
+
+        const card = document.createElement("article");
+        card.className = "card";
+
+        card.innerHTML = `
+          <div class="hero" data-open="1">
+            ${heroSrc ? `<img src="${escapeHtml(heroSrc)}" alt="${escapeHtml(p.name)}" />` : ""}
+          </div>
+
+          ${p.images && p.images.length > 1 ? `
+            <div class="thumbs">
+              ${p.images.map((src, idx)=>`
+                <div class="thumb ${idx===active?'active':''}" data-idx="${idx}" title="Opción ${idx+1}">
+                  <img src="${escapeHtml(src)}" alt="Opción ${idx+1}">
+                </div>
+              `).join("")}
+            </div>
+          ` : `<div style="height:6px"></div>`}
+
+          <div class="content">
+            <div class="tagrow">${tagHTML}</div>
+
+            <div class="name">${escapeHtml(p.name)}</div>
+            <p class="note">${escapeHtml(p.note || "")}</p>
+
+            <div class="priceRow">
+              <div>
+                <div class="priceLabel">Precio</div>
+                <div class="price">${escapeHtml(fmtARS(p.price))}</div>
+              </div>
+              <div class="rightHint">
+                <div>Elegí la foto/opción</div>
+                <div style="opacity:.85">y reservá por WhatsApp</div>
+              </div>
+            </div>
+
+            <button class="btn" data-wa="1">Reservar por WhatsApp</button>
+          </div>
+        `;
+
+        // thumbs click
+        const thumbs = card.querySelectorAll(".thumb");
+        thumbs.forEach(t=>{
+          t.addEventListener("click", (e)=>{
+            const idx = Number(t.getAttribute("data-idx"));
+            state.selectedImage[p.id] = idx;
+            render();
+          });
+        });
+
+        // open modal
+        const hero = card.querySelector(".hero");
+        if(hero){
+          hero.addEventListener("click", ()=>{
+            openModal(p, state.selectedImage[p.id] || 0);
+          });
+        }
+
+        // WhatsApp button
+        const btn = card.querySelector("[data-wa='1']");
+        btn.addEventListener("click", ()=>{
+          const link = buildWhatsAppLink(p, state.selectedImage[p.id]);
+          window.open(link, "_blank", "noopener,noreferrer");
+        });
+
+        grid.appendChild(card);
+      });
+
+      if(!list.length){
+        const empty = document.createElement("div");
+        empty.className = "card";
+        empty.innerHTML = `
+          <div class="content">
+            <div class="name">No se encontraron productos</div>
+            <p class="note">Probá con otra palabra o limpiá los filtros.</p>
+          </div>
+        `;
+        grid.appendChild(empty);
+      }
+    }
+
+    // Modal
+    function openModal(p, startIdx){
+      const modal = $("#modal");
+      const img = $("#modalImg");
+      const title = $("#modalTitle");
+      const thumbs = $("#modalThumbs");
+
+      const images = (p.images && p.images.length) ? p.images : [];
+      let idx = Math.max(0, Math.min(startIdx || 0, images.length-1));
+
+      title.textContent = `${p.name} — Opción ${idx+1}`;
+      img.src = images[idx] || "";
+
+      thumbs.innerHTML = "";
+      images.forEach((src, i)=>{
+        const d = document.createElement("div");
+        d.className = "thumb " + (i===idx ? "active" : "");
+        d.innerHTML = `<img src="${escapeHtml(src)}" alt="Opción ${i+1}">`;
+        d.addEventListener("click", ()=>{
+          idx = i;
+          state.selectedImage[p.id] = i;
+          title.textContent = `${p.name} — Opción ${idx+1}`;
+          img.src = images[idx] || "";
+          openModal(p, idx); // re-render thumbs active
+        });
+        thumbs.appendChild(d);
+      });
+
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden","false");
+    }
+
+    function closeModal(){
+      const modal = $("#modal");
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden","true");
+    }
+
+    // Events controls
+    function wireControls(){
+      $("#q").addEventListener("input", (e)=>{
+        state.q = e.target.value;
+        render();
+      });
+      $("#cat").addEventListener("change", (e)=>{
+        state.cat = e.target.value;
+        render();
+      });
+      $("#type").addEventListener("change", (e)=>{
+        state.type = e.target.value;
+        render();
+      });
+      $("#brand").addEventListener("change", (e)=>{
+        state.brand = e.target.value;
+        render();
+      });
+
+      $("#closeModal").addEventListener("click", closeModal);
+      $("#modal").addEventListener("click", (e)=>{
+        if(e.target && e.target.id === "modal") closeModal();
+      });
+      window.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape") closeModal();
+      });
+    }
+
+    // Init
+    fillSelects();
+    wireControls();
+    render();
+  </script>
+
+  <!--
+  ================================
+  ✅ PLANTILLA PARA AGREGAR PRODUCTOS
+  Copiá/pegá un bloque dentro de PRODUCTS y editá:
+  - name, category, type, brand, price, quality, note, images[]
+  - images[]: poné los nombres EXACTOS de los archivos subidos al repo
+  ================================
+  {
+    id: "un-id-unico",
+    name: "Nombre del producto",
+    category: "Mujer / Hombre / Infantil",
+    type: "Ojotas / Zapatillas / Botines / Zapatos / etc",
+    brand: "Nike / Adidas / Puma / Varios",
+    price: 14200,
+    quality: ["Premium", "Súper Luxo"],
+    note: "Talles en cada foto 😉👇 (elegí la foto/opción)",
+    images: ["foto1.jpg","foto2.jpg","foto3.jpg"]
   }
-
-  function render(){
-    const q = normalize($q.value);
-    const cat = $cat.value;
-    const type = $type.value;
-    const brand = $brand.value;
-
-    const filtered = products.filter(p=>{
-      const hay = normalize([
-        p.name, p.category, p.type, p.brand, (p.quality||[]).join(" "),
-        ...(p.photos||[])
-      ].join(" "));
-      return (!q || hay.includes(q)) &&
-             (!cat || p.category === cat) &&
-             (!type || p.type === type) &&
-             (!brand || p.brand === brand);
-    });
-
-    $grid.innerHTML = "";
-    filtered.forEach(p => $grid.appendChild(card(p)));
-    $count.textContent = `${filtered.length} producto(s)`;
-  }
-
-  $q.addEventListener("input", render);
-  $cat.addEventListener("change", render);
-  $type.addEventListener("change", render);
-  $brand.addEventListener("change", render);
-
-  render();
-</script>
+  -->
 </body>
 </html>
