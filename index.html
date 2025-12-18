@@ -3,134 +3,107 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Catálogo de Zapatillas | WhatsApp</title>
+  <title>Catálogo semanal – Pedidos hasta el jueves</title>
   <style>
-    :root {
-      --bg: #0b0f14;
-      --card: #121826;
-      --muted: #a6b0c3;
-      --text: #e8eefc;
-      --accent: #25D366;
-      --accent2: #3b82f6;
-      --border: rgba(255,255,255,.08);
+    :root{
+      --bg:#0b0f14; --muted:#a6b0c3; --text:#e8eefc; --border:rgba(255,255,255,.08);
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background: radial-gradient(1200px 600px at 20% -10%, rgba(59,130,246,.25), transparent 60%),
                   radial-gradient(900px 500px at 100% 0%, rgba(37,211,102,.15), transparent 60%),
                   var(--bg);
-      color: var(--text);
+      color:var(--text);
     }
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
+    header{
+      position:sticky; top:0; z-index:20;
       backdrop-filter: blur(12px);
       background: rgba(11,15,20,.72);
-      border-bottom: 1px solid var(--border);
+      border-bottom:1px solid var(--border);
     }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
-    .title {
-      display: flex; gap: 12px; align-items: center; justify-content: space-between;
-      flex-wrap: wrap;
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .title{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    h1{font-size:20px;margin:0;letter-spacing:.2px}
+    .subtitle{color:var(--muted);font-size:13px;margin-top:6px}
+    .pillrow{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border); color:var(--muted); background: rgba(255,255,255,.03);
     }
-    h1 { font-size: 20px; margin: 0; letter-spacing: .2px; }
-    .subtitle { color: var(--muted); font-size: 13px; margin-top: 6px; }
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    @media (min-width: 720px) {
-      .controls { grid-template-columns: 1.2fr .4fr .4fr; }
-    }
-    input, select {
-      width: 100%;
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(18,24,38,.9);
-      color: var(--text);
-      outline: none;
-    }
-    input::placeholder { color: rgba(166,176,195,.7); }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-      padding: 18px 16px 30px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    @media (min-width: 560px) { .grid { grid-template-columns: 1fr 1fr; } }
-    @media (min-width: 920px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
 
-    .card {
-      border: 1px solid var(--border);
+    .controls{
+      display:grid; grid-template-columns:1fr; gap:10px; margin-top:12px;
+    }
+    @media(min-width:720px){ .controls{grid-template-columns: 1.2fr .5fr .5fr .5fr;} }
+    input,select{
+      width:100%; padding:12px;
+      border-radius:12px; border:1px solid var(--border);
+      background: rgba(18,24,38,.9); color:var(--text); outline:none;
+    }
+    input::placeholder{color:rgba(166,176,195,.7)}
+
+    .grid{
+      display:grid; grid-template-columns:1fr; gap:14px;
+      padding:18px 16px 30px; max-width:1100px; margin:0 auto;
+    }
+    @media(min-width:560px){ .grid{grid-template-columns:1fr 1fr} }
+    @media(min-width:920px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+
+    .card{
+      border:1px solid var(--border);
       background: linear-gradient(180deg, rgba(18,24,38,.92), rgba(18,24,38,.75));
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 10px 28px rgba(0,0,0,.35);
-      display: flex;
-      flex-direction: column;
-      min-height: 420px;
+      border-radius:18px; overflow:hidden;
+      box-shadow:0 10px 28px rgba(0,0,0,.35);
+      display:flex; flex-direction:column;
     }
-    .img {
-      width: 100%;
+    .img{
+      width:100%;
       aspect-ratio: 1 / 1;
-      background: #0f1624;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      background:#0f1624;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
-    .img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scale(1.02);
+    .img img{width:100%;height:100%;object-fit:cover;transform:scale(1.02)}
+
+    .thumbs{
+      display:flex; gap:8px; padding:10px 12px 0;
+      overflow:auto;
     }
-    .content { padding: 14px 14px 16px; display: grid; gap: 10px; }
-    .pillrow { display: flex; gap: 8px; flex-wrap: wrap; }
-    .pill {
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      background: rgba(255,255,255,.03);
+    .thumb{
+      width:54px; height:54px; flex:0 0 auto;
+      border-radius:12px; overflow:hidden;
+      border:1px solid var(--border);
+      background:#0f1624;
+      cursor:pointer;
+      opacity:.78;
     }
-    .ref { color: #d6e6ff; font-weight: 650; letter-spacing: .3px; }
-    .name { font-size: 16px; font-weight: 700; margin: 0; }
-    .price {
-      display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-      border-top: 1px dashed rgba(255,255,255,.12);
-      padding-top: 10px;
-      margin-top: 2px;
+    .thumb.active{opacity:1; outline:2px solid rgba(255,255,255,.18)}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+
+    .content{padding:14px 14px 16px;display:grid;gap:10px}
+    .name{font-size:16px;font-weight:800;margin:0}
+    .muted{color:var(--muted);font-size:12px}
+    .price{
+      display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+      border-top:1px dashed rgba(255,255,255,.12);
+      padding-top:10px;
     }
-    .price strong { font-size: 18px; }
-    .muted { color: var(--muted); font-size: 12px; }
-    .actions { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 6px; }
-    .btn {
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      font-weight: 700;
-      cursor: pointer;
-      user-select: none;
+    .price strong{font-size:18px}
+    .actions{display:grid; gap:10px; margin-top:6px}
+    .btn{
+      text-decoration:none;
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px; border-radius:14px;
+      border:1px solid rgba(37,211,102,.35);
+      background: rgba(37,211,102,.16);
+      color:#eafff2;
+      font-weight:800;
     }
-    .btn-wa { background: rgba(37,211,102,.16); border-color: rgba(37,211,102,.35); color: #eafff2; }
-    .btn-copy { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.35); color: #eaf3ff; }
-    footer { color: var(--muted); font-size: 12px; padding: 10px 16px 26px; text-align: center; }
-    .count { color: #cfe3ff; font-weight: 650; }
+    .count{color:#cfe3ff;font-weight:650}
   </style>
 </head>
 
@@ -139,9 +112,9 @@
   <div class="wrap">
     <div class="title">
       <div>
-        <h1>Catálogo</h1>
+        <h1 id="pageTitle">Catálogo semanal – Pedidos hasta el jueves</h1>
         <div class="subtitle">
-          Pedidos por WhatsApp • Precio final ya con ganancia • <span class="count" id="count"></span>
+          Ingresos de la semana • Stock limitado • Solo por encargo • <span class="count" id="count"></span>
         </div>
       </div>
       <div class="pillrow">
@@ -152,15 +125,15 @@
     </div>
 
     <div class="controls">
-      <input id="q" placeholder="Buscar por REF, talle, campo, mercurial, adidas..." />
-      <select id="cat">
+      <input id="q" placeholder="Buscar (ej: ojotas, mujer, infantil, botines...)" />
+      <select id="category">
         <option value="">Todas las categorías</option>
-        <option value="Infantil Campo">Infantil • Campo</option>
       </select>
-      <select id="talle">
-        <option value="">Todos los talles</option>
-        <option value="26-32">26 al 32</option>
-        <option value="26-33">26 al 33</option>
+      <select id="type">
+        <option value="">Todos los tipos</option>
+      </select>
+      <select id="brand">
+        <option value="">Todas las marcas</option>
       </select>
     </div>
   </div>
@@ -168,125 +141,201 @@
 
 <main class="grid" id="grid"></main>
 
-<footer>
-  Si querés que agregue “Futsal / Hombre / Mujer”, o que el precio se calcule solo (+$5.000 / +$7.000), decime y lo ajusto.
-</footer>
-
 <script>
-  // ✅ TU WHATSAPP (Argentina): 54 + 9 + area + número
-  const WHATSAPP = "1167248975";
+  // ==========================
+  // ✅ PLANTILLA (EDITÁS ACÁ)
+  // ==========================
 
-  // Productos (los que me pasaste)
+  // WhatsApp (Argentina): 54 + 9 + área + número
+  const WHATSAPP = "5491167248975";
+
+  const PAGE_TITLE = "Catálogo semanal – Pedidos hasta el jueves";
+
+  // Cada producto = 1 modelo. photos = fotos/colores/variantes (sin nombres)
   const products = [
-    { ref: "156", name: "Botín Infantil Campo", category: "Infantil Campo", sizeRange: "26-32", price: 29000, img: "IMG-20251217-WA0129.jpg", tags: ["Adidas", "F50"] },
-    { ref: "107", name: "Botín Infantil Campo", category: "Infantil Campo", sizeRange: "26-32", price: 29000, img: "IMG-20251217-WA0130.jpg", tags: ["Mercurial", "Air Zoom"] },
-    { ref: "104", name: "Botín Infantil Campo", category: "Infantil Campo", sizeRange: "26-33", price: 29000, img: "IMG-20251217-WA0131.jpg", tags: ["Mercurial", "Air Zoom"] },
-    { ref: "500", name: "Botín Infantil Campo", category: "Infantil Campo", sizeRange: "26-32", price: 29000, img: "IMG-20251217-WA0132.jpg", tags: ["Mercurial", "Air Zoom"] },
-    { ref: "153", name: "Botín Infantil Campo", category: "Infantil Campo", sizeRange: "26-32", price: 29000, img: "IMG-20251217-WA0133.jpg", tags: ["Adidas", "F50"] },
-    { ref: "46",  name: "Botín Infantil Campo", category: "Infantil Campo", sizeRange: "26-32", price: 29000, img: "IMG-20251217-WA0134.jpg", tags: ["Mercurial"] },
-    { ref: "42",  name: "Botín Infantil Campo", category: "Infantil Campo", sizeRange: "26-33", price: 29000, img: "IMG-20251217-WA0135.jpg", tags: ["Mercurial"] },
+    // EJEMPLO OJOTAS (mismo modelo, varios colores)
+    {
+      name: "Ojotas Mujer",
+      category: "Mujer",
+      type: "Ojotas",
+      brand: "Vizzano",
+      price: 14200,
+      sizeInfo: "Números disponibles: ver en cada foto",
+      quality: ["Premium", "Súper Luxo"],
+      photos: [
+        "ojota-1.jpg",
+        "ojota-2.jpg",
+        "ojota-3.jpg",
+        "ojota-4.jpg"
+      ]
+    },
+
+    // EJEMPLO BOTINES (si es 1 foto sola, también funciona)
+    {
+      name: "Botines Infantil Campo",
+      category: "Infantil",
+      type: "Botines",
+      brand: "NIKE/ADIDAS",
+      price: 29000,
+      sizeInfo: "Talles en cada foto 😉👆",
+      quality: ["Premium", "Súper Luxo"],
+      photos: [
+        "IMG-20251217-WA0129.jpg",
+        "IMG-20251217-WA0130.jpg",
+        "IMG-20251217-WA0131.jpg",
+        "IMG-20251217-WA0132.jpg",
+        "IMG-20251217-WA0133.jpg",
+        "IMG-20251217-WA0134.jpg",
+        "IMG-20251217-WA0135.jpg"
+      ]
+    },
   ];
+
+  // ==========================
+  // 🔧 LÓGICA (NO TOCAR)
+  // ==========================
+
+  document.title = PAGE_TITLE;
+  document.getElementById("pageTitle").textContent = PAGE_TITLE;
 
   const $grid = document.getElementById("grid");
   const $q = document.getElementById("q");
-  const $cat = document.getElementById("cat");
-  const $talle = document.getElementById("talle");
   const $count = document.getElementById("count");
 
-  function moneyARS(n) {
-    // formato simple ARS
-    return "$" + n.toLocaleString("es-AR");
+  const $cat = document.getElementById("category");
+  const $type = document.getElementById("type");
+  const $brand = document.getElementById("brand");
+
+  function moneyARS(n){ return "$" + Number(n).toLocaleString("es-AR"); }
+  function normalize(s){
+    return (s||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
   }
 
-  function buildWA(product) {
-    const talleTxt = product.sizeRange === "26-32" ? "26 al 32" : "26 al 33";
+  function buildWA(p, selectedIndex){
+    const photoName = p.photos?.[selectedIndex] || "";
+    const option = Number.isFinite(selectedIndex) ? (selectedIndex + 1) : "";
     const text =
-`Hola! Quiero este modelo:
-• ${product.name}
-• REF: ${product.ref}
-• Talles: ${talleTxt}
-• Precio: ${moneyARS(product.price)}
+`Hola! Quiero reservar del catálogo semanal:
 
-¿Tenés stock? ¿Qué talle te queda?`;
+• Producto: ${p.name}
+• Categoría: ${p.category}
+• Tipo: ${p.type}
+• Marca: ${p.brand}
+• Calidad: ${(p.quality||[]).join(" / ")}
+
+• Opción elegida: ${option}
+• Foto: ${photoName}
+
+${p.sizeInfo ? ("• " + p.sizeInfo) : ""}
+
+• Precio: ${moneyARS(p.price)}
+
+¿Hay stock?`;
     return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
   }
 
-  async function copyText(product) {
-    const talleTxt = product.sizeRange === "26-32" ? "26 al 32" : "26 al 33";
-    const txt = `${product.name} | REF ${product.ref} | Talles ${talleTxt} | ${moneyARS(product.price)} ✅`;
-    try {
-      await navigator.clipboard.writeText(txt);
-      alert("Copiado ✅\n\n" + txt);
-    } catch (e) {
-      prompt("Copiá el texto:", txt);
-    }
+  function uniqueValues(key){
+    return Array.from(new Set(products.map(p => p[key]).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
   }
 
-  function card(p) {
-    const talleTxt = p.sizeRange === "26-32" ? "26 al 32" : "26 al 33";
-    const tags = [p.category, `Talles ${talleTxt}`, ...p.tags].filter(Boolean);
+  function fillSelect(selectEl, values){
+    values.forEach(v=>{
+      const opt=document.createElement("option");
+      opt.value=v; opt.textContent=v;
+      selectEl.appendChild(opt);
+    });
+  }
 
+  fillSelect($cat, uniqueValues("category"));
+  fillSelect($type, uniqueValues("type"));
+  fillSelect($brand, uniqueValues("brand"));
+
+  function card(p){
     const el = document.createElement("article");
     el.className = "card";
+
+    const defaultIndex = 0;
+
     el.innerHTML = `
-      <div class="img">
-        <img src="${p.img}" alt="${p.name} REF ${p.ref}">
+      <div class="img"><img src="${p.photos[defaultIndex]}" alt="${p.name}"></div>
+
+      <div class="thumbs">
+        ${p.photos.map((src, i)=>`
+          <div class="thumb ${i===0?'active':''}" data-i="${i}">
+            <img src="${src}" alt="Opción ${i+1}">
+          </div>
+        `).join("")}
       </div>
+
       <div class="content">
         <div class="pillrow">
-          ${tags.slice(0,4).map(t => `<span class="pill">${t}</span>`).join("")}
+          <span class="pill">${p.category}</span>
+          <span class="pill">${p.type}</span>
+          <span class="pill">${p.brand}</span>
+          ${(p.quality||[]).map(q=>`<span class="pill">${q}</span>`).join("")}
         </div>
-        <div class="ref">REF: ${p.ref}</div>
+
         <p class="name">${p.name}</p>
+        ${p.sizeInfo ? `<div class="muted">${p.sizeInfo}</div>` : ""}
 
         <div class="price">
           <div>
             <div class="muted">Precio</div>
             <strong>${moneyARS(p.price)}</strong>
           </div>
-          <div class="muted">Calidad Premium / Súper Luxo</div>
+          <div class="muted">Elegí la foto/ opción</div>
         </div>
 
         <div class="actions">
-          <a class="btn btn-wa" href="${buildWA(p)}" target="_blank" rel="noopener">
-            Pedir por WhatsApp
-          </a>
-          <button class="btn btn-copy" type="button">
-            Copiar texto para estado
-          </button>
+          <a class="btn" href="${buildWA(p, 0)}" target="_blank" rel="noopener">Reservar por WhatsApp</a>
         </div>
       </div>
     `;
 
-    el.querySelector(".btn-copy").addEventListener("click", () => copyText(p));
+    // lógica de cambiar la foto principal + actualizar el link WA con la opción elegida
+    const mainImg = el.querySelector(".img img");
+    const thumbs = el.querySelectorAll(".thumb");
+    const waBtn = el.querySelector(".btn");
+
+    thumbs.forEach(t=>{
+      t.addEventListener("click", ()=>{
+        thumbs.forEach(x=>x.classList.remove("active"));
+        t.classList.add("active");
+        const i = Number(t.dataset.i);
+        mainImg.src = p.photos[i];
+        waBtn.href = buildWA(p, i);
+      });
+    });
+
     return el;
   }
 
-  function normalize(s) {
-    return (s || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  }
-
-  function render() {
+  function render(){
     const q = normalize($q.value);
     const cat = $cat.value;
-    const talle = $talle.value;
+    const type = $type.value;
+    const brand = $brand.value;
 
-    const filtered = products.filter(p => {
-      const hay = normalize([p.ref, p.name, p.category, p.sizeRange, ...(p.tags||[])].join(" "));
-      const okQ = !q || hay.includes(q);
-      const okC = !cat || p.category === cat;
-      const okT = !talle || p.sizeRange === talle;
-      return okQ && okC && okT;
+    const filtered = products.filter(p=>{
+      const hay = normalize([
+        p.name, p.category, p.type, p.brand, (p.quality||[]).join(" "),
+        ...(p.photos||[])
+      ].join(" "));
+      return (!q || hay.includes(q)) &&
+             (!cat || p.category === cat) &&
+             (!type || p.type === type) &&
+             (!brand || p.brand === brand);
     });
 
     $grid.innerHTML = "";
     filtered.forEach(p => $grid.appendChild(card(p)));
-    $count.textContent = `${filtered.length} modelo(s)`;
+    $count.textContent = `${filtered.length} producto(s)`;
   }
 
   $q.addEventListener("input", render);
   $cat.addEventListener("change", render);
-  $talle.addEventListener("change", render);
+  $type.addEventListener("change", render);
+  $brand.addEventListener("change", render);
 
   render();
 </script>
