@@ -103,26 +103,20 @@
 
     /* =========================================================
        ✨ CAMBIO ESTÉTICO: GRILLA MÁS COOL + CUADRADITOS MÁS CHICOS
-       (integrado, NO en partes)
        ========================================================= */
 
-    /* Base */
     .grid{
       margin-top: 14px;
       display:grid;
       gap: 12px;
       grid-template-columns: 1fr; /* celu */
     }
-    /* Tablet: 2 columnas */
     @media (min-width: 600px){
       .grid{ grid-template-columns: 1fr 1fr; }
     }
-    /* PC: 3 columnas (cuadraditos más chicos) */
     @media (min-width: 980px){
       .grid{ grid-template-columns: 1fr 1fr 1fr; }
     }
-
-    /* (Opcional integrado) En celulares chicos, 2 columnas mini */
     @media (max-width: 520px){
       .grid{ grid-template-columns: 1fr 1fr; }
     }
@@ -144,7 +138,7 @@
     .hero{
       position: relative;
       background: #05080d;
-      aspect-ratio: 1 / 1; /* más cuadrado */
+      aspect-ratio: 1 / 1;
       overflow:hidden;
       cursor: pointer;
     }
@@ -333,7 +327,6 @@
   <header>
     <div class="wrap">
       <h1 class="title">Catálogo semanal – Calzados Importados Premium</h1>
-      <h1 class="title">(Talles Brasileros)</h1>
       <p class="subtitle">
         <span>Ingresos de la semana</span>
         <span>·</span>
@@ -346,7 +339,6 @@
 
   <main>
     <div class="container">
-      <!-- ✅ filtros scrollean (NO sticky) -->
       <section class="controls">
         <input id="q" class="input" placeholder="Buscar (ej: ojotas, mujer, infantil, botines...)" />
 
@@ -392,15 +384,10 @@
     const WHATSAPP_NUMBER = "5491167248975";
 
     // =============================
-    // DATA: productos
-    // - "images": varias fotos del MISMO modelo
-    // - Sin errores de coma final
-    // - IDs únicos (IMPORTANTE)
-    // - Jordan corregido con category/type/brand
+    // DATA: productos (IDs únicos)
     // =============================
     const PRODUCTS = [
-
-    {
+      {
     id: "34",
     name: "NIKE AIR MAX TN 2",
     category: "Hombre",
@@ -944,7 +931,6 @@
           </div>
         `;
 
-        // thumbs click
         const thumbs = card.querySelectorAll(".thumb");
         thumbs.forEach(t=>{
           t.addEventListener("click", ()=>{
@@ -954,7 +940,6 @@
           });
         });
 
-        // open modal
         const hero = card.querySelector(".hero");
         if(hero){
           hero.addEventListener("click", ()=>{
@@ -962,7 +947,6 @@
           });
         }
 
-        // WhatsApp button
         const btn = card.querySelector("[data-wa='1']");
         btn.addEventListener("click", ()=>{
           const link = buildWhatsAppLink(p, state.selectedImage[p.id]);
@@ -985,7 +969,14 @@
       }
     }
 
-    // Modal
+    // =========================================================
+    // ✅ MODAL + BOTÓN "ATRÁS" DEL CELU
+    // - Al abrir modal: guardamos un estado en el historial
+    // - Si apretás "atrás": se cierra el modal (no sale de la página)
+    // =========================================================
+    let modalOpen = false;
+    let ignoreNextPop = false;
+
     function openModal(p, startIdx){
       const modal = $("#modal");
       const img = $("#modalImg");
@@ -1015,13 +1006,38 @@
 
       modal.classList.add("open");
       modal.setAttribute("aria-hidden","false");
+      modalOpen = true;
+
+      // Empujar un estado al historial para que el botón "atrás" cierre el modal
+      // (solo si NO lo pusimos recién)
+      if(!ignoreNextPop){
+        history.pushState({ modal: true }, "", location.href);
+      }
+      ignoreNextPop = false;
     }
 
-    function closeModal(){
+    function closeModal(fromPopstate){
       const modal = $("#modal");
+      if(!modalOpen) return;
+
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden","true");
+      modalOpen = false;
+
+      // Si se cerró "a mano" (botón cerrar o click afuera), volvemos 1 paso
+      // para limpiar el estado del historial sin sacar al usuario de la página
+      if(!fromPopstate){
+        ignoreNextPop = true;
+        history.back();
+      }
     }
+
+    // Detectar botón "atrás" del celu: si el modal está abierto, lo cerramos.
+    window.addEventListener("popstate", ()=>{
+      if(modalOpen){
+        closeModal(true);
+      }
+    });
 
     // Events controls
     function wireControls(){
@@ -1042,12 +1058,12 @@
         render();
       });
 
-      $("#closeModal").addEventListener("click", closeModal);
+      $("#closeModal").addEventListener("click", ()=>closeModal(false));
       $("#modal").addEventListener("click", (e)=>{
-        if(e.target && e.target.id === "modal") closeModal();
+        if(e.target && e.target.id === "modal") closeModal(false);
       });
       window.addEventListener("keydown", (e)=>{
-        if(e.key === "Escape") closeModal();
+        if(e.key === "Escape") closeModal(false);
       });
     }
 
@@ -1056,25 +1072,5 @@
     wireControls();
     render();
   </script>
-
-  <!--
-  ================================
-  ✅ PLANTILLA PARA AGREGAR PRODUCTOS
-  Copiá/pegá un bloque dentro de PRODUCTS y editá:
-  - id (único), name, category, type, brand, price, quality, note, images[]
-  - images[]: nombres EXACTOS de archivos subidos
-  ================================
-  {
-    id: "un-id-unico",
-    name: "Nombre del producto",
-    category: "Mujer / Hombre / Infantil",
-    type: "Ojotas / Zapatillas / Botines / Zapatos / etc",
-    brand: "Nike / Adidas / Puma / Varios",
-    price: 14200,
-    quality: ["Premium", "Súper Luxo"],
-    note: "Talles en cada foto 😉👇 (elegí la foto/opción)",
-    images: ["foto1.jpg","foto2.jpg","foto3.jpg"]
-  }
-  -->
 </body>
 </html>
