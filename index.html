@@ -6,6 +6,7 @@
   <title>Catálogo semanal – Calzados Brasileros</title>
   <meta name="description" content="Catálogo semanal para pedidos por WhatsApp." />
 
+
   <style>
     :root{
       --bg:#0b0f14;
@@ -32,7 +33,6 @@
     }
     a{color:inherit}
 
-    /* ✅ HEADER: sticky SOLO título + subtítulo (bien finito) */
     header{
       position: sticky;
       top: 0;
@@ -73,7 +73,6 @@
       margin: 0 auto;
     }
 
-    /* ✅ CONTROLES: YA NO SON sticky, scrollean con la página */
     .controls{
       margin-top: 12px;
       display:grid;
@@ -101,10 +100,7 @@
     .input::placeholder{color:rgba(167,180,199,.75)}
     select{appearance:none}
 
-    /* =========================================================
-       ✨ CAMBIO ESTÉTICO: GRILLA MÁS COOL + CUADRADITOS MÁS CHICOS
-       ========================================================= */
-
+    /* ✨ GRID COMPACTO + CUADRADITOS */
     .grid{
       margin-top: 14px;
       display:grid;
@@ -138,16 +134,19 @@
     .hero{
       position: relative;
       background: #05080d;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 1 / 1; /* más cuadrado */
       overflow:hidden;
-      cursor: pointer;
+      cursor:pointer;
     }
-    .hero img{
+    .hero img, .hero video{
       width:100%;
       height:100%;
       object-fit: cover;
       display:block;
       transform: scale(1.01);
+    }
+    .hero video{
+      transform: none;
     }
 
     .thumbs{
@@ -168,13 +167,30 @@
       border: 1px solid rgba(255,255,255,.12);
       opacity: .82;
       cursor:pointer;
+      background:#05080d;
+      position: relative;
     }
     .thumb.active{
       opacity: 1;
       border-color: rgba(120,220,160,.65);
       box-shadow: 0 0 0 2px rgba(120,220,160,.18);
     }
-    .thumb img{width:100%; height:100%; object-fit: cover; display:block}
+    .thumb img, .thumb video{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .playBadge{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.18);
+      font-size: 16px;
+      pointer-events:none;
+    }
 
     .content{
       padding: 10px 12px 12px;
@@ -238,6 +254,21 @@
       line-height: 1.25;
     }
 
+    /* ✅ Fix: en cards angostas, que no se recorte el texto */
+    @media (max-width: 520px){
+      .priceRow{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .rightHint{
+        text-align: left;
+        font-size: 12px;
+        line-height: 1.3;
+        opacity: .9;
+      }
+    }
+
     .btn{
       width:100%;
       border: 1px solid rgba(120,220,160,.22);
@@ -261,7 +292,7 @@
       text-align:center;
     }
 
-    /* Modal (galería grande) */
+    /* Modal */
     .modal{
       position: fixed;
       inset: 0;
@@ -299,15 +330,16 @@
       padding: 7px 10px;
       cursor:pointer;
     }
-    .modalImg{
+    .modalMedia{
       width:100%;
       height: min(72vh, 620px);
       background:#05080d;
       display:flex;
       align-items:center;
       justify-content:center;
+      touch-action: pan-y; /* permite scroll vertical del navegador, pero swipe horizontal lo manejamos nosotros */
     }
-    .modalImg img{
+    .modalMedia img, .modalMedia video{
       max-width:100%;
       max-height:100%;
       object-fit:contain;
@@ -320,32 +352,15 @@
       overflow:auto;
       border-top: 1px solid rgba(255,255,255,.10);
     }
-
-    /* ===== Fix texto "Elegí foto/opción" en cards chicas ===== */
-@media (max-width: 520px){
-  .priceRow{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .rightHint{
-    text-align: left;
-    font-size: 12px;
-    line-height: 1.3;
-    opacity: .9;
-  }
-}
-
   </style>
 </head>
 
 <body>
   <header>
     <div class="wrap">
-      <h1 class="title">Catálogo Calzados Brasileros Premium</h1>
+      <h1 class="title">Catálogo semanal – Calzados Importados Premium</h1>
       <p class="subtitle">
-        <span>Talles Brasileros (1 menos que el argentino)</span>
+        <span>Ingresos de la semana</span>
         <span>·</span>
         <span>Stock limitado</span>
         <span>·</span>
@@ -382,16 +397,17 @@
     Pedidos por WhatsApp: <strong>11 6724-8975</strong>
   </footer>
 
-  <!-- Modal galería -->
+  <!-- Modal galería (fotos + videos) -->
   <div id="modal" class="modal" aria-hidden="true">
     <div class="modalBox">
       <div class="modalTop">
         <div id="modalTitle">Galería</div>
         <button class="xbtn" id="closeModal">Cerrar ✕</button>
       </div>
-      <div class="modalImg">
-        <img id="modalImg" src="" alt="Imagen del producto" />
-      </div>
+
+      <!-- 👇 acá se renderiza IMG o VIDEO -->
+      <div id="modalMedia" class="modalMedia"></div>
+
       <div id="modalThumbs" class="modalThumbs"></div>
     </div>
   </div>
@@ -401,11 +417,27 @@
     const WHATSAPP_NUMBER = "5491167248975";
 
     // =============================
-    // DATA: productos (IDs únicos)
+    // ✅ PRODUCTOS (ejemplo 1 solo)
+    // Para agregar videos: meté un .mp4 dentro de images[]
     // =============================
     const PRODUCTS = [
-
       {
+        id: "1",
+        name: "Ejemplo con VIDEO (poné tus datos)",
+        category: "Hombre/Mujer",
+        type: "Zapatillas",
+        brand: "Marca X",
+        price: 39900,
+        quality: ["Premium"],
+        note: "Ejemplo: podés mezclar foto + video + foto",
+        images: [
+          "IMG-ejemplo-1.jpg",
+          "VID-ejemplo-1.mp4",
+          "IMG-ejemplo-2.jpg"
+        ]
+      },
+
+ {
     id: "49",
     name: "Zapatillas modelo bebes",
     category: "Bebes",
@@ -454,13 +486,15 @@
     price: 41000,
     note: "Talles del 38 al 43 - Cuero sintético", 
     images: [
-   "botines WinnerOlimpica 1.jpeg",
+      "Video botines WinnerOlimpica.mp4",
+      "botines WinnerOlimpica 1.jpeg",
       "botines WinnerOlimpica 2.jpeg",
       "botines WinnerOlimpica 3.jpeg",
       "botines WinnerOlimpica 4.jpeg",
       "botines WinnerOlimpica 5.jpeg",
       "botines WinnerOlimpica 6.jpeg",
       "botines WinnerOlimpica 7.jpeg",
+      "VID-ejemplo-1.mp4",
     ]
   },
 
@@ -1009,12 +1043,15 @@
           "IMG-20251215-WA0026.jpg"
         ]
       }
+
+
     ];
 
     // ================
     // helpers
     // ================
     const $ = (s) => document.querySelector(s);
+
     const fmtARS = (n) => {
       try {
         return new Intl.NumberFormat("es-AR", { style:"currency", currency:"ARS", maximumFractionDigits:0 }).format(n);
@@ -1036,6 +1073,10 @@
         .replaceAll("'","&#039;");
     }
 
+    function isVideo(src){
+      return /\.(mp4|webm|ogg)$/i.test(String(src || ""));
+    }
+
     function buildWhatsAppLink(p, selectedIndex){
       const opt = (typeof selectedIndex === "number") ? (selectedIndex + 1) : 1;
 
@@ -1049,7 +1090,7 @@
         `• Marca: ${p.brand}`,
         `• Precio: ${fmtARS(p.price)}`,
         qualities ? `• ${qualities}` : "",
-        `• Opción (foto): #${opt}`,
+        `• Opción (foto/video): #${opt}`,
         "",
         "Te mando captura del color/opción que quiero."
       ].filter(Boolean).join("\n");
@@ -1057,8 +1098,55 @@
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     }
 
+    function heroMediaHTML(src, alt){
+      const safeSrc = escapeHtml(src);
+      const safeAlt = escapeHtml(alt || "");
+      if(isVideo(src)){
+        // muted/autoplay/loop para que se vea “vivo” en la card (si el celu lo permite)
+        return `<video src="${safeSrc}" muted autoplay loop playsinline preload="metadata"></video>`;
+      }
+      return `<img src="${safeSrc}" alt="${safeAlt}" />`;
+    }
+
+    function thumbMediaHTML(src, label){
+      const safeSrc = escapeHtml(src);
+      const safeLabel = escapeHtml(label || "");
+      if(isVideo(src)){
+        return `
+          <video src="${safeSrc}" muted playsinline preload="metadata"></video>
+          <div class="playBadge">▶</div>
+        `;
+      }
+      return `<img src="${safeSrc}" alt="${safeLabel}">`;
+    }
+
+    function renderModalMedia(container, src, altText){
+      const safeSrc = escapeHtml(src || "");
+      const safeAlt = escapeHtml(altText || "Media");
+
+      // limpia lo anterior (y corta video anterior)
+      container.innerHTML = "";
+
+      if(!src) return;
+
+      if(isVideo(src)){
+        const v = document.createElement("video");
+        v.src = src;
+        v.controls = true;
+        v.autoplay = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        container.appendChild(v);
+      } else {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = safeAlt;
+        container.appendChild(img);
+      }
+    }
+
     // ================
-    // UI render
+    // state
     // ================
     const state = {
       q: "",
@@ -1068,6 +1156,9 @@
       selectedImage: {} // productId -> index
     };
 
+    // ================
+    // UI
+    // ================
     function fillSelects(){
       const cats = uniqSorted(PRODUCTS.map(p=>p.category));
       const types = uniqSorted(PRODUCTS.map(p=>p.type));
@@ -1109,6 +1200,208 @@
       return true;
     }
 
+    // =========================================================
+    // ✅ MODAL: back button + swipe
+    // =========================================================
+    let modalOpen = false;
+    let ignoreNextPop = false;
+
+    let currentModalProduct = null;
+    let currentModalIndex = 0;
+
+    const swipe = {
+      xStart: 0,
+      yStart: 0,
+      xEnd: 0,
+      yEnd: 0,
+      active: false
+    };
+
+    function renderModal(){
+      const modal = $("#modal");
+      const title = $("#modalTitle");
+      const media = $("#modalMedia");
+      const thumbs = $("#modalThumbs");
+
+      if(!currentModalProduct){
+        // por las dudas
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden","true");
+        modalOpen = false;
+        return;
+      }
+
+      const p = currentModalProduct;
+      const items = (p.images && p.images.length) ? p.images : [];
+      if(!items.length) return;
+
+      // clamp index
+      if(currentModalIndex < 0) currentModalIndex = 0;
+      if(currentModalIndex > items.length - 1) currentModalIndex = items.length - 1;
+
+      title.textContent = `${p.name} — Opción ${currentModalIndex + 1}`;
+
+      // media principal
+      const src = items[currentModalIndex];
+      renderModalMedia(media, src, p.name);
+
+      // thumbs
+      thumbs.innerHTML = "";
+      items.forEach((srcThumb, i)=>{
+        const d = document.createElement("div");
+        d.className = "thumb " + (i===currentModalIndex ? "active" : "");
+        d.innerHTML = thumbMediaHTML(srcThumb, `Opción ${i+1}`);
+        d.addEventListener("click", ()=>{
+          currentModalIndex = i;
+          state.selectedImage[p.id] = i;
+          renderModal();
+        });
+        thumbs.appendChild(d);
+      });
+    }
+
+    function openModal(p, startIdx){
+      const modal = $("#modal");
+
+      currentModalProduct = p;
+      const items = (p.images && p.images.length) ? p.images : [];
+      const max = Math.max(0, items.length - 1);
+
+      currentModalIndex = Math.max(0, Math.min(startIdx || 0, max));
+      state.selectedImage[p.id] = currentModalIndex;
+
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden","false");
+      modalOpen = true;
+
+      renderModal();
+
+      // Empujar historial para que el botón "atrás" cierre modal
+      if(!ignoreNextPop){
+        history.pushState({ modal: true }, "", location.href);
+      }
+      ignoreNextPop = false;
+    }
+
+    function closeModal(fromPopstate){
+      const modal = $("#modal");
+      if(!modalOpen) return;
+
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden","true");
+      modalOpen = false;
+
+      // limpiar media (corta video)
+      $("#modalMedia").innerHTML = "";
+      $("#modalThumbs").innerHTML = "";
+
+      currentModalProduct = null;
+      currentModalIndex = 0;
+
+      // Si se cerró manualmente, volvemos 1 paso para limpiar el pushState
+      if(!fromPopstate){
+        ignoreNextPop = true;
+        history.back();
+      }
+    }
+
+    // Botón atrás del celu: si modal está abierto, cerrar (sin salir de la web)
+    window.addEventListener("popstate", ()=>{
+      if(modalOpen){
+        closeModal(true);
+      }
+    });
+
+    // Swipe dentro del modal
+    function goPrev(){
+      if(!modalOpen || !currentModalProduct) return;
+      const items = currentModalProduct.images || [];
+      if(!items.length) return;
+      currentModalIndex = Math.max(0, currentModalIndex - 1);
+      state.selectedImage[currentModalProduct.id] = currentModalIndex;
+      renderModal();
+    }
+
+    function goNext(){
+      if(!modalOpen || !currentModalProduct) return;
+      const items = currentModalProduct.images || [];
+      if(!items.length) return;
+      currentModalIndex = Math.min(items.length - 1, currentModalIndex + 1);
+      state.selectedImage[currentModalProduct.id] = currentModalIndex;
+      renderModal();
+    }
+
+    function wireSwipe(){
+      const area = $("#modalMedia");
+
+      const threshold = 45;     // px
+      const restraint = 80;     // tolerancia vertical
+
+      // Touch
+      area.addEventListener("touchstart", (e)=>{
+        if(!modalOpen) return;
+        const t = e.changedTouches[0];
+        swipe.xStart = t.screenX;
+        swipe.yStart = t.screenY;
+        swipe.xEnd = t.screenX;
+        swipe.yEnd = t.screenY;
+        swipe.active = true;
+      }, { passive: true });
+
+      area.addEventListener("touchmove", (e)=>{
+        if(!modalOpen || !swipe.active) return;
+        const t = e.changedTouches[0];
+        swipe.xEnd = t.screenX;
+        swipe.yEnd = t.screenY;
+      }, { passive: true });
+
+      area.addEventListener("touchend", ()=>{
+        if(!modalOpen || !swipe.active) return;
+        swipe.active = false;
+
+        const dx = swipe.xEnd - swipe.xStart;
+        const dy = Math.abs(swipe.yEnd - swipe.yStart);
+
+        if(dy > restraint) return; // era scroll vertical
+        if(Math.abs(dx) < threshold) return;
+
+        if(dx < 0) goNext(); // swipe izquierda -> next
+        else goPrev();       // swipe derecha -> prev
+      });
+
+      // Mouse (arrastre)
+      let mouseDown = false;
+      area.addEventListener("mousedown", (e)=>{
+        if(!modalOpen) return;
+        mouseDown = true;
+        swipe.xStart = e.screenX;
+        swipe.yStart = e.screenY;
+        swipe.xEnd = e.screenX;
+        swipe.yEnd = e.screenY;
+      });
+
+      window.addEventListener("mousemove", (e)=>{
+        if(!modalOpen || !mouseDown) return;
+        swipe.xEnd = e.screenX;
+        swipe.yEnd = e.screenY;
+      });
+
+      window.addEventListener("mouseup", ()=>{
+        if(!modalOpen || !mouseDown) return;
+        mouseDown = false;
+
+        const dx = swipe.xEnd - swipe.xStart;
+        const dy = Math.abs(swipe.yEnd - swipe.yStart);
+
+        if(dy > 80) return;
+        if(Math.abs(dx) < 60) return;
+
+        if(dx < 0) goNext();
+        else goPrev();
+      });
+    }
+
+    // Render principal
     function render(){
       const list = PRODUCTS.filter(matches);
       const grid = $("#grid");
@@ -1117,10 +1410,13 @@
       list.forEach(p=>{
         if(state.selectedImage[p.id] == null) state.selectedImage[p.id] = 0;
 
-        const active = Math.max(0, Math.min(state.selectedImage[p.id], (p.images?.length||1)-1));
+        const items = (p.images && p.images.length) ? p.images : [];
+        const max = Math.max(0, items.length - 1);
+
+        const active = Math.max(0, Math.min(state.selectedImage[p.id], max));
         state.selectedImage[p.id] = active;
 
-        const heroSrc = (p.images && p.images.length) ? p.images[active] : "";
+        const heroSrc = items[active] || "";
 
         const qualities = (p.quality && p.quality.length) ? p.quality : [];
         const tagHTML = [
@@ -1135,14 +1431,14 @@
 
         card.innerHTML = `
           <div class="hero" data-open="1">
-            ${heroSrc ? `<img src="${escapeHtml(heroSrc)}" alt="${escapeHtml(p.name)}" />` : ""}
+            ${heroSrc ? heroMediaHTML(heroSrc, p.name) : ""}
           </div>
 
-          ${p.images && p.images.length > 1 ? `
+          ${items.length > 1 ? `
             <div class="thumbs">
-              ${p.images.map((src, idx)=>`
+              ${items.map((src, idx)=>`
                 <div class="thumb ${idx===active?'active':''}" data-idx="${idx}" title="Opción ${idx+1}">
-                  <img src="${escapeHtml(src)}" alt="Opción ${idx+1}">
+                  ${thumbMediaHTML(src, `Opción ${idx+1}`)}
                 </div>
               `).join("")}
             </div>
@@ -1169,6 +1465,7 @@
           </div>
         `;
 
+        // thumbs
         const thumbs = card.querySelectorAll(".thumb");
         thumbs.forEach(t=>{
           t.addEventListener("click", ()=>{
@@ -1178,6 +1475,7 @@
           });
         });
 
+        // open modal
         const hero = card.querySelector(".hero");
         if(hero){
           hero.addEventListener("click", ()=>{
@@ -1185,6 +1483,7 @@
           });
         }
 
+        // WhatsApp
         const btn = card.querySelector("[data-wa='1']");
         btn.addEventListener("click", ()=>{
           const link = buildWhatsAppLink(p, state.selectedImage[p.id]);
@@ -1207,77 +1506,7 @@
       }
     }
 
-    // =========================================================
-    // ✅ MODAL + BOTÓN "ATRÁS" DEL CELU
-    // - Al abrir modal: guardamos un estado en el historial
-    // - Si apretás "atrás": se cierra el modal (no sale de la página)
-    // =========================================================
-    let modalOpen = false;
-    let ignoreNextPop = false;
-
-    function openModal(p, startIdx){
-      const modal = $("#modal");
-      const img = $("#modalImg");
-      const title = $("#modalTitle");
-      const thumbs = $("#modalThumbs");
-
-      const images = (p.images && p.images.length) ? p.images : [];
-      let idx = Math.max(0, Math.min(startIdx || 0, images.length-1));
-
-      title.textContent = `${p.name} — Opción ${idx+1}`;
-      img.src = images[idx] || "";
-
-      thumbs.innerHTML = "";
-      images.forEach((src, i)=>{
-        const d = document.createElement("div");
-        d.className = "thumb " + (i===idx ? "active" : "");
-        d.innerHTML = `<img src="${escapeHtml(src)}" alt="Opción ${i+1}">`;
-        d.addEventListener("click", ()=>{
-          idx = i;
-          state.selectedImage[p.id] = i;
-          title.textContent = `${p.name} — Opción ${idx+1}`;
-          img.src = images[idx] || "";
-          openModal(p, idx);
-        });
-        thumbs.appendChild(d);
-      });
-
-      modal.classList.add("open");
-      modal.setAttribute("aria-hidden","false");
-      modalOpen = true;
-
-      // Empujar un estado al historial para que el botón "atrás" cierre el modal
-      // (solo si NO lo pusimos recién)
-      if(!ignoreNextPop){
-        history.pushState({ modal: true }, "", location.href);
-      }
-      ignoreNextPop = false;
-    }
-
-    function closeModal(fromPopstate){
-      const modal = $("#modal");
-      if(!modalOpen) return;
-
-      modal.classList.remove("open");
-      modal.setAttribute("aria-hidden","true");
-      modalOpen = false;
-
-      // Si se cerró "a mano" (botón cerrar o click afuera), volvemos 1 paso
-      // para limpiar el estado del historial sin sacar al usuario de la página
-      if(!fromPopstate){
-        ignoreNextPop = true;
-        history.back();
-      }
-    }
-
-    // Detectar botón "atrás" del celu: si el modal está abierto, lo cerramos.
-    window.addEventListener("popstate", ()=>{
-      if(modalOpen){
-        closeModal(true);
-      }
-    });
-
-    // Events controls
+    // Controls
     function wireControls(){
       $("#q").addEventListener("input", (e)=>{
         state.q = e.target.value;
@@ -1308,7 +1537,22 @@
     // Init
     fillSelects();
     wireControls();
+    wireSwipe();
     render();
   </script>
+
+  <!--
+  ============================================================
+  ✅ CÓMO AGREGAR VIDEOS (sin cambiar tu estructura)
+  - En "images": podés mezclar JPG/PNG + MP4
+  - Ejemplo:
+    images: [
+      "IMG-1.jpg",
+      "VID-1.mp4",
+      "IMG-2.jpg"
+    ]
+  - El video debe estar subido donde subís las fotos (misma carpeta/ruta)
+  ============================================================
+  -->
 </body>
 </html>
